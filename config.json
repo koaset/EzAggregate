@@ -1,0 +1,52 @@
+{
+	"database":{
+		"url": "mongodb://localhost:27017/"
+	},
+	"sources":[
+		{
+			"name":"source1",
+			"type":"restapi",
+			"baseurl":"localhost:8080",
+			"path":"/bananas",
+			"fields":[
+				{
+					"user_id":"string",
+					"name":"string",
+					"num_bananas":"int"
+				}
+			]
+		}
+	],
+	"stores":[
+		{
+			"name":"banana_store",
+			"sources":[
+				"source1"
+			],
+			"key":"user_id",
+			"fields":[
+				"name",
+				"num_bananas"
+			]
+			
+		}
+	],
+	"outputs":[
+		{
+			"name":"bananapi",
+			"type":"restapi",
+			"path":"bananas",
+
+			"store_name":"banana_store",
+
+			"aggregate_field":"num_bananas",
+			"aggregate_action":"sum",
+
+			"query_fields":[ 
+				"user_id" 
+			],
+			
+			"timeframe":"1h"
+		}
+	]
+}
