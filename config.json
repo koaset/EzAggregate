@@ -7,23 +7,13 @@
 		"source_port": "8079",
 		"output_port": "8080"
 	},
-	"stores":[
-		{
-			"name":"banana_store",
-			"sources":[
-				"source1"
-			],
-			"key":"user_id",
-			"fields":[
-				"name",
-				"num_bananas"
-			]
-			
-		}
+	"stores": [ 
+		"banana_store",
+		"favorites_store" 
 	],
 	"sources":[
 		{
-			"name":"source1",
+			"name":"banana_source",
 			"type":"restapi",
 			"store":"banana_store",
 			"path":"/bananas",
@@ -31,6 +21,16 @@
 				"user_id":"string",
 				"name":"string",
 				"num_bananas":"number"
+			}
+		},
+		{
+			"name":"favorites_source",
+			"type":"restapi",
+			"store":"favorites_store",
+			"path":"/favorites",
+			"fields":{
+				"user_id":"string",
+				"favorite":"string"
 			}
 		}
 	],
@@ -50,6 +50,13 @@
 			],
 			
 			"timeframe":"1h"
+		},
+		{
+			"name":"favorites_api",
+			"type":"restapi",
+			"port":"8080",
+			"path":"/favorites",
+			"store_name":"favorites_store"
 		}
 	]
 }

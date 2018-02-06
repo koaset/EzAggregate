@@ -22,7 +22,7 @@ module.exports = {
   addToStore: function addToStore(storeName, entry) {
     db.collection(storeName).insertOne(entry, function(err, res) {
         if (err) throw err;
-        console.log('Entry added to store: ' + entry);
+        console.log('Entry added to store ' + storeName + ".");
     });
   },
 
@@ -37,9 +37,7 @@ module.exports = {
   }
 };
 
-async function assureStore(store) {
-  var name = store.name;
-
+async function assureStore(name) {
   var exists = await db.listCollections({name: name}).hasNext();
   console.log('Store ' + name + ' exists: ' + exists);
 
