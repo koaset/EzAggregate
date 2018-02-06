@@ -1,22 +1,12 @@
 {
 	"database":{
-		"url": "mongodb://localhost:27017/"
+		"url": "mongodb://localhost:27017/",
+		"name": "test"
 	},
-	"sources":[
-		{
-			"name":"source1",
-			"type":"restapi",
-			"baseurl":"localhost:8080",
-			"path":"/bananas",
-			"fields":[
-				{
-					"user_id":"string",
-					"name":"string",
-					"num_bananas":"int"
-				}
-			]
-		}
-	],
+	"restapi":{
+		"source_port": "8079",
+		"output_port": "8080"
+	},
 	"stores":[
 		{
 			"name":"banana_store",
@@ -31,12 +21,25 @@
 			
 		}
 	],
+	"sources":[
+		{
+			"name":"source1",
+			"type":"restapi",
+			"store":"banana_store",
+			"path":"/bananas",
+			"fields":{
+				"user_id":"string",
+				"name":"string",
+				"num_bananas":"number"
+			}
+		}
+	],
 	"outputs":[
 		{
 			"name":"bananapi",
 			"type":"restapi",
-			"path":"bananas",
-
+			"port":"8080",
+			"path":"/bananas",
 			"store_name":"banana_store",
 
 			"aggregate_field":"num_bananas",
