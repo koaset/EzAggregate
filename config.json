@@ -1,62 +1,43 @@
 {
-	"database":{
-		"url": "mongodb://localhost:27017/",
+	"database": {
+		"url":  "mongodb://localhost:27017/",
 		"name": "test"
 	},
-	"restapi":{
+	"restapi" : {
 		"source_port": "8079",
 		"output_port": "8080"
 	},
 	"stores": [ 
-		"banana_store",
-		"favorites_store" 
+		"banana_store"
 	],
-	"sources":[
+	"sources": [
 		{
-			"name":"banana_source",
-			"type":"restapi",
-			"store":"banana_store",
-			"path":"/bananas",
-			"fields":{
-				"user_id":"string",
-				"name":"string",
-				"num_bananas":"number"
-			}
-		},
-		{
-			"name":"favorites_source",
-			"type":"restapi",
-			"store":"favorites_store",
-			"path":"/favorites",
-			"fields":{
-				"user_id":"string",
-				"favorite":"string"
+			"name": "banana_source",
+			"type": "restapi",
+			"store": "banana_store",
+			"path": "/bananas",
+			"fields": {
+				"user_id": "string",
+				"name": "string",
+				"num_bananas": "number"
 			}
 		}
 	],
-	"outputs":[
+	"outputs": [
 		{
-			"name":"bananapi",
-			"type":"restapi",
-			"port":"8080",
-			"path":"/bananas",
-			"store_name":"banana_store",
-
-			"aggregate_field":"num_bananas",
-			"aggregate_action":"sum",
-
-			"query_fields":[ 
-				"user_id" 
-			],
-			
-			"timeframe":"1h"
-		},
-		{
-			"name":"favorites_api",
-			"type":"restapi",
-			"port":"8080",
-			"path":"/favorites",
-			"store_name":"favorites_store"
+			"name": "bananapi",
+			"type": "restapi",
+			"path": "/bananas",
+			"store": "banana_store",
+			"aggregation": {
+				"name": "sum_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "sum",
+				"order_by": "sum_bananas",
+				"invert": true
+			},
+			"timeframe": "1h"
 		}
 	]
 }
