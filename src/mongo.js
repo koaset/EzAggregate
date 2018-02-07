@@ -26,9 +26,9 @@ module.exports = {
     });
   },
 
-  getAllFromStore: async function getAllFromStore(storeName) {
+  getFromStore: async function getFromStore(storeName, query) {
     return new Promise(function(resolve, reject) {
-      db.collection(storeName).find({}).toArray(function(err, res) {
+      db.collection(storeName).find(query).toArray(function(err, res) {
           if (err) throw err;
           delete res.forEach(r => { delete r._id });
           resolve(res);
