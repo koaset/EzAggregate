@@ -1,4 +1,5 @@
 const config = require('../config.json');
+const express = require('express');
 
 module.exports = {  start: function( callback ) {
     if (config.sources.some(s => s.type === "restapi"))
@@ -9,7 +10,6 @@ module.exports = {  start: function( callback ) {
 };
 
 function createApp() {
-    var express = require('express');
     app = express();
     var bodyParser = require('body-parser');
     app.use(bodyParser.json());

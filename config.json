@@ -36,8 +36,17 @@
 				"action": "sum",
 				"order_by": "sum_bananas",
 				"invert": true
-			},
-			"timeframe": "1h"
+			}
+		},
+		{
+			"name": "bananapi2",
+			"type": "restapi",
+			"path": "/ban",
+			"store": "banana_store",
+			"time_options": {
+				"field": "timestamp",
+				"max_age": "30m"
+			}
 		}
 	]
 }

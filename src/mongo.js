@@ -1,4 +1,5 @@
 const config = require('../config.json');
+const parse = require('parse-duration');
 var MongoClient = require('mongodb').MongoClient;
 var dburl = config.database.url;
 var dbName = config.database.name;
@@ -20,14 +21,19 @@ module.exports = {
   },
 
   addToStore: function addToStore(storeName, entry) {
+    entry.timestamp = new Date().toISOString();
     db.collection(storeName).insertOne(entry, function(err, res) {
         if (err) throw err;
         console.log('Entry added to store ' + storeName + ".");
     });
   },
 
-  getFromStore: async function getFromStore(storeName, query) {
+  getFromStore: async function getFromStore(storeName, query, time_options) {
     return new Promise(function(resolve, reject) {
+
+      if (time_options !== undefined)
+        setTimeOptions(query, time_options);
+
       db.collection(storeName).find(query).toArray(function(err, res) {
           if (err) throw err;
           delete res.forEach(r => { delete r._id });
@@ -36,6 +42,27 @@ module.exports = {
     });
   }
 };
+
+function setTimeOptions(query, time_options) {
+  if (time_options.max_age === undefined && time_options.min_age === undefined)
+    return;
+
+  if (time_options.field === undefined)
+    time_options.field = "timestamp";
+  
+  var max = parseTime(time_options.max_age);
+
+  if (max === undefined)
+    return;
+
+  query[time_options.field] = { $lte: max };
+}
+
+function parseTime(duration) {
+  var currentMs = +new Date();
+  var durationMs = parse(duration);
+  return new Date(currentMs - durationMs).toISOString();
+}
 
 async function assureStore(name) {
   var exists = await db.listCollections({name: name}).hasNext();

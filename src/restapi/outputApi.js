@@ -15,7 +15,7 @@ function startOutput(output, app){
         var object;
         try {
             var query = url.parse(req.url, true).query;
-            var entries = await db.getFromStore(output.store, query);
+            var entries = await db.getFromStore(output.store, query, output.time_options);
             var aggregation = aggregate(output.aggregation, entries);
             res.json(aggregation);
         }
