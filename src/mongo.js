@@ -7,11 +7,15 @@ var db;
 
 module.exports = {
 
-  connect: function( callback ) {
-    MongoClient.connect( dburl, function( err, con ) {
-      console.log('Connecting to database');
-      db = con.db(dbName);
-      return callback( err );
+  connect: async function( callback ) {
+    return new Promise(async function(resolve, reject) {
+      console.log('Connecting to database...');
+      MongoClient.connect( dburl, function( err, con ) {
+        if (err) reject(err);
+        db = con.db(dbName);
+        console.log('Connected to database.');
+        resolve(callback(err));
+      });
     });
   },
 
