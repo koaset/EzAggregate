@@ -59,7 +59,7 @@ function setTimeOptions(query, time_options) {
   if (max === undefined)
     return;
 
-  query[time_options.field] = { $lte: max };
+  query[time_options.field] = { $gte: max };
 }
 
 function parseTime(duration) {
