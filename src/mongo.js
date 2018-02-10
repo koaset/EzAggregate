@@ -20,15 +20,31 @@ module.exports = {
   },
 
   assureStores: function assureStores() {
-    var stores = config.stores;
+    var stores = config.database.stores;
     stores.forEach(store => assureStore(store));
+  },
+
+  scheduleCleanup: function scheduleCleanup() {
+    var cleanup = config.database.cleanup;
+    var interval = cleanup.ms_interval;
+    var stores = config.database.stores;
+    stores.forEach(s => {
+      setInterval(function(){
+        var max = parseTime(cleanup.max_age);
+        db.collection(s).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
+          if (err) throw err;
+          var deleted = res.deletedCount;
+          if (deleted !== 0)
+            console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s);
+        })}, interval);
+      console.log('Cleanup scheduled for store ' + s + ' every ' + interval + " ms.");
+    });
   },
 
   addToStore: function addToStore(storeName, entry) {
     entry.timestamp = new Date().toISOString();
     db.collection(storeName).insertOne(entry, function(err, res) {
         if (err) throw err;
-        console.log('Entry added to store ' + storeName + ".");
     });
   },
 

@@ -1,7 +1,14 @@
 {
 	"database": {
 		"url":  "mongodb://localhost:27017/",
-		"name": "test"
+		"name": "test",
+		"stores": [ 
+			"banana_store"
+		],
+		"cleanup": {
+			"ms_interval": 60000,
+			"max_age": "20s"
+		}
 	},
 	"restapi" : {
 		"source_port": "8079",
@@ -10,9 +17,6 @@
 	"rabbitmq" : {
 		"url": "amqp://localhost"
 	},
-	"stores": [ 
-		"banana_store"
-	],
 	"sources": [
 		{
 			"name": "banana_source",
@@ -57,6 +61,12 @@
 				"field": "timestamp",
 				"max_age": "10s"
 			}
+		},
+		{
+			"name": "bananapi_all",
+			"type": "restapi",
+			"path": "/bananas/all",
+			"store": "banana_store"
 		}
 	]
 }

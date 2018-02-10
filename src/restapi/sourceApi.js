@@ -24,5 +24,5 @@ function startSource(source, app){
         }
         res.end();
     });
-    console.log("Started source: + " + source.name + " @ " + source.path);
+    console.log("Started source: " + source.name + " @ " + source.path);
 }

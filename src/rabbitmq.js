@@ -32,5 +32,4 @@ function handleMessage(json, source){
     catch (err) {
         console.error('Error when handling MQ message:' + err);
     }
-    console.log("Message handled for source " + source.name);
 }
