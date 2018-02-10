@@ -7,6 +7,9 @@
 		"source_port": "8079",
 		"output_port": "8080"
 	},
+	"rabbitmq" : {
+		"url": "amqp://localhost"
+	},
 	"stores": [ 
 		"banana_store"
 	],
@@ -16,6 +19,19 @@
 			"type": "restapi",
 			"store": "banana_store",
 			"path": "/bananas",
+			"fields": {
+				"user_id": "string",
+				"name": "string",
+				"num_bananas": "number"
+			}
+		},
+		{
+			"name": "banana_mq",
+			"type": "rabbitmq",
+			"exchange": "test_exchange",
+			"queue": "test_queue",
+			"routing_key": "banana_key",
+			"store": "banana_store",
 			"fields": {
 				"user_id": "string",
 				"name": "string",
@@ -36,16 +52,10 @@
 				"action": "sum",
 				"order_by": "sum_bananas",
 				"invert": true
-			}
-		},
-		{
-			"name": "bananapi2",
-			"type": "restapi",
-			"path": "/ban",
-			"store": "banana_store",
+			},
 			"time_options": {
 				"field": "timestamp",
-				"max_age": "30m"
+				"max_age": "10s"
 			}
 		}
 	]
