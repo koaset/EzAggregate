@@ -30,7 +30,7 @@ function handleMessage(json, source){
         db.addToStore(source.store, entry);
     }
     catch (err) {
-        console.log(err);
+        console.error('Error when handling MQ message:' + err);
     }
     console.log("Message handled for source " + source.name);
 }

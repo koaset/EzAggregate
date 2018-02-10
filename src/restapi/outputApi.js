@@ -20,7 +20,7 @@ function startOutput(output, app){
             res.json(aggregation);
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
             res.writeHead(500);
         }
         res.end();
