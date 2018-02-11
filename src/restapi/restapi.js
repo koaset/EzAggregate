@@ -1,7 +1,7 @@
 const config = require('../../config.json');
 const express = require('express');
 
-module.exports = {  start: function( callback ) {
+function start() {
     if (config.sources.some(s => s.type === "restapi"))
         require('./sourceApi').start(createApp(), config);
     if (config.outputs.some(s => s.type === "restapi"))
@@ -16,8 +16,7 @@ module.exports = {  start: function( callback ) {
 
         require('./outputApi').start(app, config);
     }
-  }  
-};
+}  
 
 function createApp() {
     app = express();
@@ -25,3 +24,7 @@ function createApp() {
     app.use(bodyParser.json());
     return app;
 }
+
+module.exports = {  
+    start: start
+};

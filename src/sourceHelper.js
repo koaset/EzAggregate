@@ -1,5 +1,4 @@
 function createDbObject(body, fields) {
-
     var entry = {};
     for (var field in fields) {
         var value = body[field];

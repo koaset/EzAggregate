@@ -18,7 +18,7 @@
 		]
 	},
 	"restapi" : {
-		"swagger_name": "Hej",
+		"swagger_name": "KoAgg - Test",
 		"source_port": "8079",
 		"output_port": "8080"
 	},

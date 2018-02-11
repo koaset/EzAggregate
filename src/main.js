@@ -11,7 +11,5 @@ async function main(){
     mq.start();
 
     var api = require('./restapi/restApi');
-    api.start( function (err){
-
-    });
+    api.start();
 }

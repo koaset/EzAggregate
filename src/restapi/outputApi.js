@@ -1,14 +1,13 @@
 const db = require('.././mongo');
 const url = require('url');
 
-module.exports = {  start: function( app, config, callback ) {
+function start(app, config, callback) {
     var outputs = config.outputs.filter(s => s.type === "restapi");
     console.log("Starting output rest API.");
     outputs.forEach(o => startOutput(o, app));
     app.listen(config.restapi.output_port);
     console.log("Output rest API started.");
-  }
-};
+}
 
 function startOutput(output, app){
     app.get(output.path, async function(req, res) {
@@ -67,5 +66,8 @@ function compare(e1, e2, key) {
     if (e1[key] > e2[key])
       return 1;
     return 0;
-  }
+}
   
+module.exports = {  
+    start: start
+};
