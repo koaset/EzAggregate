@@ -10,7 +10,7 @@ async function main(){
     var mq = require('./rabbitmq');
     mq.start();
 
-    var api = require('./restApi');
+    var api = require('./restapi/restApi');
     api.start( function (err){
 
     });

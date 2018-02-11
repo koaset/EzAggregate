@@ -1,4 +1,5 @@
 const db = require('.././mongo');
+const config = require('../../config.json');
 const sourceHelper = require('../sourceHelper');
 
 module.exports = {  start: function( app, config, callback ) {
@@ -11,12 +12,12 @@ module.exports = {  start: function( app, config, callback ) {
 };
 
 function startSource(source, app){
-    
+    var store = config.database.stores.find(store => store.name === source.store);
     app.post(source.path, function(req, res) {
         var entry;
         try {
-            entry = sourceHelper.createDbObject(req.body, source.fields);
-            db.addToStore(source.store, entry);
+            entry = sourceHelper.createDbObject(req.body, store.fields);
+            db.addToStore(store.name, entry);
         }
         catch (err) {
             console.log(err);

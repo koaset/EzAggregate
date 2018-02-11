@@ -1,14 +1,12 @@
-module.exports = {
-    createDbObject: function createDbObject(body, fields) {
+function createDbObject(body, fields) {
 
-        var entry = {};
-        for (var field in fields) {
-            var value = body[field];
-            validateEntry(fields[field], field, value);
-            entry[field] = value;
-        }
-        return entry;
+    var entry = {};
+    for (var field in fields) {
+        var value = body[field];
+        validateEntry(fields[field], field, value);
+        entry[field] = value;
     }
+    return entry;
 }
 
 function validateEntry(type, key, value) {
@@ -23,4 +21,8 @@ function validateEntry(type, key, value) {
         return;
     }
     throw "Invalid type: " + type;
+}
+
+module.exports = {
+    createDbObject: createDbObject
 }

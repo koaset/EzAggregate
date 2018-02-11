@@ -10,12 +10,13 @@ module.exports = {
             conn.createChannel(function(err, ch) {
                 sources.forEach(s => {
                     var queue = s.queue;
+                    var store = config.database.stores.find(store => store.name === s.store);
                     ch.assertQueue(queue, {durable: true});
                     if (s.exchange !== undefined)
                         ch.bindQueue(queue, s.exchange, s.routing_key);
                     ch.consume(queue, function(msg) {
                         var json = JSON.parse(msg.content);
-                        handleMessage(json, s);
+                        handleMessage(json, store);
                     },  {noAck: true});
                     console.log('RabbitMQ source initiated: ' + s.name);
                 });
@@ -24,10 +25,10 @@ module.exports = {
     }
 }
 
-function handleMessage(json, source){
+function handleMessage(json, store){
     try {
-        var entry = sourceHelper.createDbObject(json, source.fields);
-        db.addToStore(source.store, entry);
+        var entry = sourceHelper.createDbObject(json, store.fields);
+        db.addToStore(store.name, entry);
     }
     catch (err) {
         console.error('Error when handling MQ message:' + err);

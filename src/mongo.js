@@ -25,19 +25,19 @@ module.exports = {
   },
 
   scheduleCleanup: function scheduleCleanup() {
-    var cleanup = config.database.cleanup;
-    var interval = cleanup.ms_interval;
     var stores = config.database.stores;
     stores.forEach(s => {
+      var cleanup = s.cleanup;
+      var interval = s.cleanup.ms_interval;
       setInterval(function(){
         var max = parseTime(cleanup.max_age);
-        db.collection(s).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
+        db.collection(s.name).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
           if (err) throw err;
           var deleted = res.deletedCount;
           if (deleted !== 0)
-            console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s);
+            console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
         })}, interval);
-      console.log('Cleanup scheduled for store ' + s + ' every ' + interval + " ms.");
+      console.log('Cleanup scheduled for store ' + s.name + ' every ' + interval + " ms.");
     });
   },
 
@@ -84,7 +84,8 @@ function parseTime(duration) {
   return new Date(currentMs - durationMs).toISOString();
 }
 
-async function assureStore(name) {
+async function assureStore(store) {
+  var name = store.name;
   var exists = await db.listCollections({name: name}).hasNext();
   console.log('Store ' + name + ' exists: ' + exists);
 

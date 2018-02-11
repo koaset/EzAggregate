@@ -3,14 +3,22 @@
 		"url":  "mongodb://localhost:27017/",
 		"name": "test",
 		"stores": [ 
-			"banana_store"
-		],
-		"cleanup": {
-			"ms_interval": 60000,
-			"max_age": "20s"
-		}
+			{
+				"name": "banana_store",
+				"fields": {
+					"user_id": "string",
+					"name": "string",
+					"num_bananas": "number"
+				},
+				"cleanup": {
+					"ms_interval": 60000,
+					"max_age": "20s"
+				}
+			}
+		]
 	},
 	"restapi" : {
+		"swagger_name": "Hej",
 		"source_port": "8079",
 		"output_port": "8080"
 	},
@@ -20,35 +28,24 @@
 	"sources": [
 		{
 			"name": "banana_source",
-			"type": "restapi",
 			"store": "banana_store",
-			"path": "/bananas",
-			"fields": {
-				"user_id": "string",
-				"name": "string",
-				"num_bananas": "number"
-			}
+			"type": "restapi",
+			"path": "/bananas"
 		},
 		{
 			"name": "banana_mq",
-			"type": "rabbitmq",
-			"exchange": "test_exchange",
-			"queue": "test_queue",
-			"routing_key": "banana_key",
 			"store": "banana_store",
-			"fields": {
-				"user_id": "string",
-				"name": "string",
-				"num_bananas": "number"
-			}
+			"type": "rabbitmq",
+			"queue": "test_queue"
 		}
 	],
 	"outputs": [
 		{
 			"name": "bananapi",
-			"type": "restapi",
-			"path": "/bananas",
 			"store": "banana_store",
+			"type": "restapi",
+			"description": "Sum of bananas per user",
+			"path": "/bananas",
 			"aggregation": {
 				"name": "sum_bananas",
 				"key": "user_id",
@@ -64,9 +61,10 @@
 		},
 		{
 			"name": "bananapi_all",
+			"store": "banana_store",
 			"type": "restapi",
-			"path": "/bananas/all",
-			"store": "banana_store"
+			"description": "Returns all bananas",
+			"path": "/bananas/all"
 		}
 	]
 }
