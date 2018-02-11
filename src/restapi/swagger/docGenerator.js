@@ -86,7 +86,7 @@ function createDefinition(doc, output){
         return { 
             properties: 
             {
-                keyField: { type: store.fields[keyField] },
+                [keyField]: { type: store.fields[keyField] },
                 [agg.name]: { type: store.fields[aggField] }
             }
         };
