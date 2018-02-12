@@ -7,6 +7,12 @@ function start(source) {
     var sources = config.sources.filter(s => s.type === "rabbitmq");
 
     amqp.connect(config.rabbitmq.url, function(err, conn) {
+        if (err) 
+        {
+            console.error('Unable to connect to RabbitMQ: ' + err.message);
+            throw err.message;
+        };
+
         conn.createChannel(function(err, ch) {
             sources.forEach(s => {
                 var queue = s.queue;

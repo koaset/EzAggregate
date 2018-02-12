@@ -9,7 +9,11 @@ async function connect(callback) {
   return new Promise(async function(resolve, reject) {
     console.log('Connecting to database...');
     MongoClient.connect( dburl, function( err, con ) {
-      if (err) reject(err);
+      if (err) 
+      {
+        console.error('Unable to connect to database: ' + err.message);
+        throw err.message;
+      };
       db = con.db(dbName);
       console.log('Connected to database.');
       resolve(callback(err));
