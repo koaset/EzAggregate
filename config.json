@@ -57,7 +57,22 @@
 			},
 			"time_options": {
 				"field": "timestamp",
-				"max_age": "30m"
+				"max_age": "1h"
+			}
+		},
+		{
+			"name": "bananapi_max",
+			"store": "banana_store",
+			"type": "restapi",
+			"description": "Max of bananas per user",
+			"path": "/bananas/max",
+			"aggregation": {
+				"name": "top_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "max",
+				"order_by": "top_bananas",
+				"invert": true
 			}
 		},
 		{

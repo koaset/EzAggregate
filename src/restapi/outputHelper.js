@@ -23,10 +23,22 @@ function aggregate(agg, entries) {
     if (agg === undefined || agg.name === undefined || agg.field === undefined)
         return entries;
     
-    if (agg.action === "sum")
-        return sum(agg, entries);
+    var result;
 
-    return entries;
+    if (agg.action === "sum")
+        result = sum(agg, entries);
+    if (agg.action === "max")
+        result = max(agg, entries);
+
+    if (!(result instanceof Array))
+        return result;
+
+    if (agg.order_by !== undefined)
+        result.sort((e1, e2) => compare(e1, e2, agg.order_by));
+    if (agg.invert !== undefined && agg.invert.toString() == "true")
+        result.reverse();
+
+    return result;
 }
 
 function sum(agg, entries) {
@@ -34,13 +46,7 @@ function sum(agg, entries) {
         return { [agg.name]: entries.map(e => e[agg.field]).reduce((acc, cur) => acc + cur, 0) };
 
     entries.sort((e1, e2) => compare(e1, e2, agg.key));
-    var summed = sumByKey(agg, entries);
-
-    if (agg.order_by !== undefined)
-        summed.sort((e1, e2) => compare(e1, e2, agg.order_by));
-    if (agg.invert !== undefined && agg.invert.toString() == "true")
-        summed.reverse();
-    return summed;
+    return sumByKey(agg, entries);
 }
 
 function sumByKey(agg, entries){
@@ -59,6 +65,19 @@ function compare(e1, e2, key) {
     if (e1[key] > e2[key])
       return 1;
     return 0;
+}
+
+function max(agg, entries) {
+    if (agg.key === undefined)
+        return { [agg.name]: Math.max(...entries.map(e => e[agg.field])) };
+    entries.sort((e1, e2) => -compare(e1, e2, agg.field));
+    var ret = [];
+    entries.forEach(e => {
+        if (ret.some(r => r[agg.key] === e[agg.key]))
+            return;
+        ret.push({ [agg.key]: e[agg.key], [agg.name]: e[agg.field] });
+    });
+    return ret;
 }
   
 module.exports = {  
