@@ -47,6 +47,17 @@ function generate(outputs, sources){
 }
 
 function createOutputPath(output, def){
+    var store = config.database.stores.find(s => s.name == output.store);
+    var params = [];
+
+    for (var key in store.fields){
+        params.push({
+            name: key,
+            type: store.fields[key],
+            in: 'query'
+        });
+    }
+
     return {
         summary: getProperty(output.summary),
         description: getProperty(output.description),
@@ -57,7 +68,8 @@ function createOutputPath(output, def){
                     "$ref": '#/definitions/' + def
                 }
             }
-        }
+        },
+        parameters: params
     };
 }
 
