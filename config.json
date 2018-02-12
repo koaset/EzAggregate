@@ -11,8 +11,8 @@
 					"num_bananas": "number"
 				},
 				"cleanup": {
-					"ms_interval": 60000,
-					"max_age": "20s"
+					"interval": "1h",
+					"max_age": "1h"
 				}
 			}
 		]
@@ -57,7 +57,7 @@
 			},
 			"time_options": {
 				"field": "timestamp",
-				"max_age": "10s"
+				"max_age": "30m"
 			}
 		},
 		{

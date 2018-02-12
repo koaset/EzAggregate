@@ -43,16 +43,18 @@ function scheduleCleanup() {
   var stores = config.database.stores;
   stores.forEach(s => {
     var cleanup = s.cleanup;
-    var interval = s.cleanup.ms_interval;
+    if (cleanup === undefined)
+      return;
+      
     setInterval(function(){
-      var max = parseTime(cleanup.max_age);
+      var max = parseTimestamp(cleanup.max_age);
       db.collection(s.name).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
         if (err) throw err;
         var deleted = res.deletedCount;
         if (deleted !== 0)
           console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
-      })}, interval);
-    console.log('Cleanup scheduled for store ' + s.name + ' every ' + interval + " ms.");
+      })}, parse(cleanup.interval));
+    console.log('Cleanup scheduled for store ' + s.name + ' every ' + cleanup.interval + " ms.");
   });
 }
 
@@ -84,7 +86,7 @@ function setTimeOptions(query, time_options) {
   if (time_options.field === undefined)
     time_options.field = "timestamp";
   
-  var max = parseTime(time_options.max_age);
+  var max = parseTimestamp(time_options.max_age);
 
   if (max === undefined)
     return;
@@ -92,7 +94,7 @@ function setTimeOptions(query, time_options) {
   query[time_options.field] = { $gte: max };
 }
 
-function parseTime(duration) {
+function parseTimestamp(duration) {
   var currentMs = +new Date();
   var durationMs = parse(duration);
   return new Date(currentMs - durationMs).toISOString();
