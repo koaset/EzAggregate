@@ -18,7 +18,7 @@
 		]
 	},
 	"restapi" : {
-		"swagger_name": "KoAgg - Test",
+		"swagger_name": "EzAggregate - Test",
 		"port": 8080,
 		"base_path": "/api"
 	},
@@ -30,7 +30,8 @@
 			"name": "banana_source",
 			"store": "banana_store",
 			"type": "restapi",
-			"path": "/bananas"
+			"path": "/bananas",
+			"description": "Add your bananas here!"
 		},
 		{
 			"name": "banana_mq",
