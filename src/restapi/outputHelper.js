@@ -2,13 +2,7 @@ const db = require('.././mongo');
 const config = require('../../config.json');
 const url = require('url');
 
-function start(app, config, callback) {
-    var outputs = config.outputs.filter(s => s.type === "restapi");
-    console.log("Starting output rest API.");
-    outputs.forEach(o => startOutput(o, app));
-}
-
-function startOutput(output, app){
+function addOutput(output, app){
     app.get(config.restapi.base_path + output.path, async function(req, res) {
         var object;
         try {
@@ -68,5 +62,5 @@ function compare(e1, e2, key) {
 }
   
 module.exports = {  
-    start: start
+    addOutput: addOutput
 };

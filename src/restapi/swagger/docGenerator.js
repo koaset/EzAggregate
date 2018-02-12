@@ -17,11 +17,7 @@ var baseDoc = {
     ]
 };
 
-function generateSourceDoc(sources){
-    return swaggerDoc;
-}
-
-function generateOutputDoc(outputs){
+function generate(outputs, sources){
     if (outputs.length === 0)
         return;
     var doc = Object.assign({}, baseDoc);
@@ -95,7 +91,6 @@ function getProperty(p){
 }
 
 module.exports = {
-    generateOutputDoc: generateOutputDoc,
-    generateSourceDoc: generateSourceDoc
+    generate: generate
 }
 

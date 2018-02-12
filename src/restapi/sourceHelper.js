@@ -2,13 +2,7 @@ const db = require('.././mongo');
 const config = require('../../config.json');
 const sourceHelper = require('../sourceHelper');
 
-function start (app, config, callback) {
-    var sources = config.sources.filter(s => s.type === "restapi");
-    console.log("Starting source rest API.");
-    sources.forEach(s => startSource(s, app));
-}  
-
-function startSource(source, app){
+function addSource(source, app){
     var store = config.database.stores.find(store => store.name === source.store);
     app.post(config.restapi.base_path + source.path, function(req, res) {
         var entry;
@@ -26,5 +20,5 @@ function startSource(source, app){
 }
 
 module.exports = {  
-    start: start
+    addSource: addSource
 };
