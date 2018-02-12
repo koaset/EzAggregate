@@ -1,16 +1,15 @@
 const db = require('.././mongo');
+const config = require('../../config.json');
 const url = require('url');
 
 function start(app, config, callback) {
     var outputs = config.outputs.filter(s => s.type === "restapi");
     console.log("Starting output rest API.");
     outputs.forEach(o => startOutput(o, app));
-    app.listen(config.restapi.output_port);
-    console.log("Output rest API started.");
 }
 
 function startOutput(output, app){
-    app.get(output.path, async function(req, res) {
+    app.get(config.restapi.base_path + output.path, async function(req, res) {
         var object;
         try {
             var query = url.parse(req.url, true).query;

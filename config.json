@@ -19,8 +19,8 @@
 	},
 	"restapi" : {
 		"swagger_name": "KoAgg - Test",
-		"source_port": "8079",
-		"output_port": "8080"
+		"port": 8080,
+		"base_path": "/api"
 	},
 	"rabbitmq" : {
 		"url": "amqp://localhost"

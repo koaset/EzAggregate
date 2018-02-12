@@ -7,11 +7,8 @@ var baseDoc = {
       title: getProperty(config.restapi.swagger_name),
       description: "Some aggregator",
     },
-    host: "localhost:8080",
-    basePath: "/",
-    schemes: [
-      "http"
-    ],
+    host: "localhost:" + config.restapi.port,
+    basePath: config.restapi.base_path,
     consumes: [
       "application/json"
     ],
