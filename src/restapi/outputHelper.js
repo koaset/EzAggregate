@@ -29,6 +29,8 @@ function aggregate(agg, entries) {
         result = sum(agg, entries);
     if (agg.action === "max")
         result = max(agg, entries);
+    if (agg.action === "min")
+        result = min(agg, entries);
 
     if (!(result instanceof Array))
         return result;
@@ -71,6 +73,19 @@ function max(agg, entries) {
     if (agg.key === undefined)
         return { [agg.name]: Math.max(...entries.map(e => e[agg.field])) };
     entries.sort((e1, e2) => -compare(e1, e2, agg.field));
+    var ret = [];
+    entries.forEach(e => {
+        if (ret.some(r => r[agg.key] === e[agg.key]))
+            return;
+        ret.push({ [agg.key]: e[agg.key], [agg.name]: e[agg.field] });
+    });
+    return ret;
+}
+
+function min(agg, entries) {
+    if (agg.key === undefined)
+        return { [agg.name]: Math.min(...entries.map(e => e[agg.field])) };
+    entries.sort((e1, e2) => compare(e1, e2, agg.field));
     var ret = [];
     entries.forEach(e => {
         if (ret.some(r => r[agg.key] === e[agg.key]))

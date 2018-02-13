@@ -70,9 +70,20 @@
 				"name": "top_bananas",
 				"key": "user_id",
 				"field": "num_bananas",
-				"action": "max",
-				"order_by": "top_bananas",
-				"invert": true
+				"action": "max"
+			}
+		},
+		{
+			"name": "bananapi_min",
+			"store": "banana_store",
+			"type": "restapi",
+			"description": "Min of bananas per user",
+			"path": "/bananas/min",
+			"aggregation": {
+				"name": "top_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "min"
 			}
 		},
 		{

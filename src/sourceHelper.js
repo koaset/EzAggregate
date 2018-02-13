@@ -12,7 +12,9 @@ function validateEntry(type, key, value) {
     if (value === undefined)
             throw "Field " + key + " missing or invalid";
     if (type === "string") {
-        return; // nothing for now
+        if (typeof(value) !== "string")
+            throw "Invalid value: " + value + ", expected " + type;
+        return;
     }
     else if (type === "number") {
         if (typeof(value) !== "number")
