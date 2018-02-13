@@ -6,20 +6,23 @@ if (require.main === module) {
 
 async function start(config){
     return new Promise(async function(resolve, reject) {
-        if (config === undefined)
+        console.log('Starting application...');
+        if (config == null)
             reject("Unable to load config.");
         require('./configStorage').load(config);
 
         var db = require('./mongo');
-        await db.connect( function (err){
-            db.assureStores();
-            db.scheduleCleanup();
-        });
+        await db.connect();
+        await db.assureStores();
 
+        var cleanupStart = db.scheduleCleanup();
         var mqStart = require('./rabbitmq').start();
         var apiStart = require('./restapi/restApi').start();
+
         await mqStart;
         await apiStart;
+        await cleanupStart;
+        console.log('Startup complete.');
         resolve();
     });
 }

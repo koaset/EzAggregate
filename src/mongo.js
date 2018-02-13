@@ -5,7 +5,7 @@ var dburl = config.database.url;
 var dbName = config.database.name;
 var db;
 
-async function connect(callback) {
+async function connect() {
   return new Promise(async function(resolve, reject) {
     console.log('Connecting to database...');
     MongoClient.connect( dburl, function( err, con ) {
@@ -16,45 +16,51 @@ async function connect(callback) {
       };
       db = con.db(dbName);
       console.log('Connected to database.');
-      resolve(callback(err));
+      resolve();
     });
   });
 }
 
-function assureStores() {
-  var stores = config.database.stores;
-  stores.forEach(store => assureStore(store));
+async function assureStores() {
+    var stores = config.database.stores;
+    for (let store of config.database.stores)
+      await assureStore(store);
 }
 
 async function assureStore(store) {
-  var name = store.name;
-  var exists = await db.listCollections({name: name}).hasNext();
-  console.log('Store ' + name + ' exists: ' + exists);
+  return new Promise(async function(resolve, reject) {
+    var name = store.name;
+    var exists = await db.listCollections({name: name}).hasNext();
+    console.log('Store ' + name + ' exists: ' + exists);
 
-  if (exists) return;
+    if (exists) resolve();
 
-  db.createCollection(name, function(err, res) {
-    if (err) throw err;
-    console.log("Store " + name + " created.");
+    await db.createCollection(name, function(err, res) {
+      if (err) throw err;
+      console.log("Store " + name + " created.");
+      resolve();
+    });
   });
 }
 
 function scheduleCleanup() {
-  var stores = config.database.stores;
-  stores.forEach(s => {
-    var cleanup = s.cleanup;
-    if (cleanup === undefined)
-      return;
-      
-    setInterval(function(){
-      var max = parseTimestamp(cleanup.max_age);
-      db.collection(s.name).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
-        if (err) throw err;
-        var deleted = res.deletedCount;
-        if (deleted !== 0)
-          console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
-      })}, parse(cleanup.interval));
-    console.log('Cleanup scheduled for store ' + s.name + ' every ' + cleanup.interval + " ms.");
+  return new Promise(async function(resolve, reject) {
+    var stores = config.database.stores;
+    stores.forEach(s => {
+      var cleanup = s.cleanup;
+      if (cleanup != null) {
+        setInterval(function(){
+          var max = parseTimestamp(cleanup.max_age);
+          db.collection(s.name).deleteMany({ timestamp: {$lt: max }}, function(err, res) {
+            if (err) throw err;
+            var deleted = res.deletedCount;
+            if (deleted !== 0)
+              console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
+          })}, parse(cleanup.interval));
+        console.log('Cleanup scheduled for store ' + s.name + ' every ' + cleanup.interval + " ms.");
+      }
+    });
+    resolve();
   });
 }
 

@@ -5,7 +5,8 @@ const sourceHelper = require('../sourceHelper');
 
 function addSource(source, app){
     var store = config.database.stores.find(store => store.name === source.store);
-    app.post(config.restapi.base_path + source.path, function(req, res) {
+    var fullSourcePath = config.restapi.base_path + source.path;
+    app.post(fullSourcePath, function(req, res) {
         var entry;
         try {
             entry = sourceHelper.createDbObject(req.body, store.fields);
@@ -17,7 +18,7 @@ function addSource(source, app){
         }
         res.end();
     });
-    console.log("Started source: " + source.name + " @ " + source.path);
+    console.log("Started source: " + source.name + " @ " + fullSourcePath);
 }
 
 module.exports = {  
