@@ -88,6 +88,7 @@ function createSourcePath(source, def){
         parameters: [
             {
                 "in": "body",
+                "name": "body",
                 "description": getProperty(source.description),
                 "schema": {
                     "$ref": '#/definitions/' + def
