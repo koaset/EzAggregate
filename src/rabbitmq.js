@@ -4,30 +4,35 @@ const sourceHelper = require('./sourceHelper');
 const config = require('../config.json');
 
 function start(source) {
-    var sources = config.sources.filter(s => s.type === "rabbitmq");
+    return new Promise(function(resolve, reject) {
+        var sources = config.sources.filter(s => s.type === "rabbitmq");
+        amqp.connect(config.rabbitmq.url, function(err, conn) {
+            if (err) 
+            {
+                console.error('Unable to connect to RabbitMQ: ' + err.message);
+                throw err.message;
+            };
 
-    amqp.connect(config.rabbitmq.url, function(err, conn) {
-        if (err) 
-        {
-            console.error('Unable to connect to RabbitMQ: ' + err.message);
-            throw err.message;
-        };
-
-        conn.createChannel(function(err, ch) {
-            sources.forEach(s => {
-                var queue = s.queue;
-                var store = config.database.stores.find(store => store.name === s.store);
-                ch.assertQueue(queue, {durable: true});
-                if (s.exchange !== undefined)
-                    ch.bindQueue(queue, s.exchange, s.routing_key);
-                ch.consume(queue, function(msg) {
-                    var json = JSON.parse(msg.content);
-                    handleMessage(json, store);
-                },  {noAck: true});
-                console.log('RabbitMQ source initiated: ' + s.name);
+            conn.createChannel(function(err, ch) {
+                for (let s of sources)
+                    setUpSource(s, ch);
+                resolve();
             });
         });
     });
+}
+
+function setUpSource(s, ch) {
+    var queue = s.queue;
+    var store = config.database.stores.find(store => store.name === s.store);
+    ch.assertQueue(queue, {durable: true});
+    if (s.exchange !== undefined)
+        ch.bindQueue(queue, s.exchange, s.routing_key);
+    ch.consume(queue, function(msg) {
+        var json = JSON.parse(msg.content);
+        handleMessage(json, store);
+    },  {noAck: true});
+    console.log('RabbitMQ source initiated: ' + s.name);
 }
 
 function handleMessage(json, store){

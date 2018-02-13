@@ -1,8 +1,20 @@
 var expect = require('chai').expect;
 var request = require("request");
 var baseUrl = 'http://localhost:8080/';
+var main = require('../src/main');
 
 describe("main tests", function() {
+
+    before(async function(){
+        console.log('Starting test instance...');
+        await main.start();
+        console.log('Test instance started.');
+    });
+
+    after(function(){
+        main.stop();
+    });
+
     var length;
     describe("get bananas/all", function() {
         it ("returns status 200 and empty list", function(done){
@@ -10,7 +22,6 @@ describe("main tests", function() {
                 expect(response.statusCode).to.equal(200);
                 var responseObject = JSON.parse(response.body);
                 length = responseObject.length
-                console.log(length);
                 done();
             });
         });
