@@ -90,8 +90,12 @@
 			"name": "bananapi_all",
 			"store": "banana_store",
 			"type": "restapi",
-			"description": "Returns all bananas",
-			"path": "/bananas/all"
+			"description": "Returns latest bananas",
+			"path": "/bananas/all",
+			"time_options": {
+				"field": "timestamp",
+				"max_age": "1h"
+			}
 		}
 	]
 }

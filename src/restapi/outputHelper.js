@@ -21,7 +21,7 @@ function addOutput(output, app){
 
 function aggregate(agg, entries) {
     if (agg === undefined || agg.name === undefined || agg.field === undefined)
-        return entries;
+        return entries.sort((e1, e2) => -compare(e1, e2, "timestamp"));
     
     var result;
 
