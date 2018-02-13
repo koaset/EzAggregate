@@ -1,0 +1,47 @@
+{
+	"database": {
+		"name": "test_db",
+		"url":  "mongodb://localhost:27017/",
+		"stores": [ 
+			{
+				"name": "banana_store",
+				"fields": {
+					"user_id": "string",
+					"num_bananas": "number"
+				}
+			}
+		]
+	},
+	"restapi" : {
+		"swagger_name": "EzAggregate - Test",
+		"port": 8079,
+		"base_path": "/api"
+	},
+	"rabbitmq" : {
+		"url": "amqp://localhost"
+	},
+	"sources": [
+		{
+			"name": "banana_source",
+			"store": "banana_store",
+			"type": "restapi",
+			"path": "/bananas"
+		}
+	],
+	"outputs": [
+		{
+			"name": "bananapi",
+			"store": "banana_store",
+			"type": "restapi",
+			"path": "/bananas",
+			"aggregation": {
+				"name": "sum_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "sum",
+				"order_by": "sum_bananas",
+				"invert": true
+			}
+		}
+	]
+}

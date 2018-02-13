@@ -1,4 +1,4 @@
-var config = require('./../../../config.json');
+var config = require('../../configStorage').get();
 
 var baseDoc = {
     swagger: "2.0",

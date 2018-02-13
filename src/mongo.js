@@ -1,4 +1,4 @@
-const config = require('../config.json');
+const config = require('./configStorage').get();
 const parse = require('parse-duration');
 var MongoClient = require('mongodb').MongoClient;
 var dburl = config.database.url;

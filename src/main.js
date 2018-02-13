@@ -1,12 +1,14 @@
 var main = start;
 if (require.main === module) {
-    start();
+    var config = require('../config.json');
+    start(config);
 }
 
 async function start(config){
     return new Promise(async function(resolve, reject) {
         if (config === undefined)
-            config = require('../config.json');
+            reject("Unable to load config.");
+        require('./configStorage').load(config);
 
         var db = require('./mongo');
         await db.connect( function (err){

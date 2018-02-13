@@ -1,5 +1,6 @@
-const db = require('.././mongo');
-const config = require('../../config.json');
+const db = require('../mongo');
+const config = require('../configStorage').get();
+
 const sourceHelper = require('../sourceHelper');
 
 function addSource(source, app){

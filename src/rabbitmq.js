@@ -1,7 +1,7 @@
 const amqp = require('amqplib/callback_api');
 const db = require('./mongo');
 const sourceHelper = require('./sourceHelper');
-const config = require('../config.json');
+const config = require('./configStorage').get();
 
 function start(source) {
     return new Promise(function(resolve, reject) {

@@ -1,5 +1,5 @@
 const db = require('.././mongo');
-const config = require('../../config.json');
+const config = require('../configStorage').get();
 const url = require('url');
 
 function addOutput(output, app){
