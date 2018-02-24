@@ -1,4 +1,8 @@
 var main = start;
+var db;
+var mq;
+var api;
+
 if (require.main === module) {
     var config = require('../config.json');
     start(config);
@@ -11,13 +15,16 @@ async function start(config){
             reject("Unable to load config.");
         require('./configStorage').load(config);
 
-        var db = require('./mongo');
+        db = require('./mongo');
+        mq = require('./rabbitmq');
+        api = require('./restapi/restApi');
+
         await db.connect();
         await db.assureStores();
 
         var cleanupStart = db.scheduleCleanup();
-        var mqStart = require('./rabbitmq').start();
-        var apiStart = require('./restapi/restApi').start();
+        var mqStart = mq.start();
+        var  apiStart = api.start();
 
         await mqStart;
         await apiStart;
@@ -28,7 +35,9 @@ async function start(config){
 }
 
 function stop(){
-    process.exit();
+    mq.stop();
+    api.stop();
+    db.stop();
 }
 
 module.exports = {

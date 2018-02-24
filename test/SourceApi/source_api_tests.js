@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var request = require("request");
-var main = require('../src/main');
-var config = require('./test_config.json');
+var main = require('../../src/main');
+var config = require('./source_api_test_config.json');
 var baseUrl = 'http://localhost:' + config.restapi.port + '/';
 
 describe("main tests", function() {

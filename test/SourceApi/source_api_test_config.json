@@ -13,8 +13,8 @@
 		]
 	},
 	"restapi" : {
-		"swagger_name": "EzAggregate - Test",
-		"port": 8079,
+		"swagger_name": "EzAggregate - API source Test",
+		"port": 8080,
 		"base_path": "/api"
 	},
 	"sources": [

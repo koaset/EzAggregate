@@ -1,12 +1,13 @@
-const config = require('../configStorage').get();
 const express = require('express');
+var server;
 
 async function start() {
     return new Promise(async function(resolve, reject) {
-        var app = express();
+        app = express();
         var bodyParser = require('body-parser');
         app.use(bodyParser.json());
 
+        var config = require('./../configStorage').get();
         var sources = config.sources.filter(s => s.type === "restapi")
         var outputs = config.outputs.filter(s => s.type === "restapi");
 
@@ -20,11 +21,19 @@ async function start() {
         var outputHelper = require('./outputHelper');
         outputs.forEach(o => outputHelper.addOutput(o, app));
 
-        app.listen(config.restapi.port);
+        server = app.listen(config.restapi.port);
+        resolve();
+    });
+}
+
+async function stop() {
+    return new Promise(async function(resolve, reject) {
+        await server.close();
         resolve();
     });
 }
 
 module.exports = {  
-    start: start
+    start: start,
+    stop: stop
 };

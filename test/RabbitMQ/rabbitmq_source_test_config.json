@@ -1,0 +1,49 @@
+{
+	"database": {
+		"url":  "mongodb://localhost:27017/",
+		"name": "test",
+		"stores": [ 
+			{
+				"name": "banana_store",
+				"fields": {
+					"user_id": "string",
+					"name": "string",
+					"num_bananas": "number"
+				}
+			}
+		]
+	},
+	"restapi" : {
+		"swagger_name": "EzAggregate - MQ source Test",
+		"port": 8080,
+		"base_path": "/api"
+	},
+	"rabbitmq" : {
+		"url": "localhost"
+	},
+	"sources": [
+		{
+			"name": "banana_mq",
+			"store": "banana_store",
+			"type": "rabbitmq",
+			"queue": "test_queue"
+		}
+	],
+	"outputs": [
+		{
+			"name": "bananapi",
+			"store": "banana_store",
+			"type": "restapi",
+			"description": "Sum of bananas per user",
+			"path": "/mqbananas",
+			"aggregation": {
+				"name": "sum_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "sum",
+				"order_by": "sum_bananas",
+				"invert": true
+			}
+		}
+	]
+}

@@ -1,10 +1,13 @@
 const amqp = require('amqplib/callback_api');
 const db = require('./mongo');
 const sourceHelper = require('./sourceHelper');
-const config = require('./configStorage').get();
+var config;
+var connection;
 
 function start(source) {
     return new Promise(function(resolve, reject) {
+        config = require('./configStorage').get();
+
         var sources = config.sources.filter(s => s.type === "rabbitmq");
         
         if (sources.length === 0)
@@ -21,15 +24,20 @@ function start(source) {
                 console.error('Unable to connect to RabbitMQ: ' + err.message);
                 throw err.message;
             };
-
             conn.createChannel(function(err, ch) {
                 for (let s of sources)
                     setUpSource(s, ch);
+                connection = conn;
                 resolve();
             });
         });
     });
 }
+
+function stop() {
+    connection.close();
+}
+
 
 function getConnectionString(mqConfig){
     if (mqConfig == null)
@@ -64,5 +72,6 @@ function handleMessage(json, store){
 }
 
 module.exports = {
-    start: start
+    start: start,
+    stop: stop
 }

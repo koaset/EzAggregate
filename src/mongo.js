@@ -1,24 +1,29 @@
-const config = require('./configStorage').get();
+var config;
 const parse = require('parse-duration');
-var MongoClient = require('mongodb').MongoClient;
-var dburl = config.database.url;
-var dbName = config.database.name;
+var mongoClient = require('mongodb').MongoClient;
 var db;
+var connection;
 
 async function connect() {
   return new Promise(async function(resolve, reject) {
+    config = require('./configStorage').get();
     console.log('Connecting to database...');
-    MongoClient.connect( dburl, function( err, con ) {
+    mongoClient.connect( config.database.url, function( err, con ) {
       if (err) 
       {
         console.error('Unable to connect to database: ' + err.message);
         throw err.message;
       };
-      db = con.db(dbName);
+      connection = con;
+      db = con.db(config.database.name);
       console.log('Connected to database.');
       resolve();
     });
   });
+}
+
+function stop() {
+  connection.close();
 }
 
 async function assureStores() {
@@ -108,6 +113,7 @@ function parseTimestamp(duration) {
 
 module.exports = {
   connect: connect,
+  stop: stop,
   assureStores: assureStores,
   scheduleCleanup: scheduleCleanup,
   addToStore: addToStore,
