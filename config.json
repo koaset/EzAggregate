@@ -23,7 +23,9 @@
 		"base_path": "/api"
 	},
 	"rabbitmq" : {
-		"url": "amqp://localhost"
+		"url": "localhost",
+		"username": "mq_test_user",
+		"password": "test"
 	},
 	"sources": [
 		{

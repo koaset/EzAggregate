@@ -6,7 +6,16 @@ const config = require('./configStorage').get();
 function start(source) {
     return new Promise(function(resolve, reject) {
         var sources = config.sources.filter(s => s.type === "rabbitmq");
-        amqp.connect(config.rabbitmq.url, function(err, conn) {
+        
+        if (sources.length === 0)
+            resolve();
+
+        var connectionString = getConnectionString(config.rabbitmq);
+
+        if (connectionString == null)
+            reject("RabbitMQ config missing.");
+
+        amqp.connect(connectionString, function(err, conn) {
             if (err) 
             {
                 console.error('Unable to connect to RabbitMQ: ' + err.message);
@@ -20,6 +29,15 @@ function start(source) {
             });
         });
     });
+}
+
+function getConnectionString(mqConfig){
+    if (mqConfig == null)
+        return;
+    var ret = 'amqp://';
+    if (mqConfig.username != undefined && mqConfig.password != undefined)
+        ret += mqConfig.username + ':' + mqConfig.password + '@';
+    return ret + mqConfig.url;
 }
 
 function setUpSource(s, ch) {
