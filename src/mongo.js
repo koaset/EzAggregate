@@ -24,7 +24,8 @@ async function connect() {
 }
 
 function stop() {
-  connection.close();
+  if (connection)
+    connection.close();
 }
 
 async function assureStores() {

@@ -36,7 +36,8 @@ function start(source) {
 }
 
 function stop() {
-    connection.close();
+    if (connection)
+        connection.close();
 }
 
 

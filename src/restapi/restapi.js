@@ -28,7 +28,8 @@ async function start() {
 
 async function stop() {
     return new Promise(async function(resolve, reject) {
-        await server.close();
+        if (server)
+            await server.close();
         resolve();
     });
 }
