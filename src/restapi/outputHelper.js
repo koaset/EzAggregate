@@ -1,6 +1,7 @@
 const db = require('.././mongo');
 const config = require('../configStorage').get();
 const url = require('url');
+var log = require('log4js').getLogger(require('path').basename(__filename));
 
 function addOutput(output, app){
     app.get(config.restapi.base_path + output.path, async function(req, res) {
@@ -12,7 +13,7 @@ function addOutput(output, app){
             res.json(aggregation);
         }
         catch (err) {
-            console.error(err);
+            log.error(err);
             res.writeHead(500);
         }
         res.end();

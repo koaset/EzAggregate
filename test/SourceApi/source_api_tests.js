@@ -3,17 +3,18 @@ var request = require("request");
 var main = require('../../src/main');
 var config = require('./source_api_test_config.json');
 var baseUrl = 'http://localhost:' + config.restapi.port + '/';
+var log = require('log4js').getLogger(require('path').basename(__filename));
 
 describe("main tests", function() {
 
     before(async function(){
-        console.log('Starting test instance...');
+        log.info('Starting test instance...');
         await main.start(config);
-        console.log('Test instance started.\nRunning tests...');
+        log.info('Test instance started.\nRunning tests...');
     });
 
     after(function(){
-        console.log('Tests done, closing test instance.');
+        log.info('Tests done, closing test instance.');
         main.stop();
     });
 

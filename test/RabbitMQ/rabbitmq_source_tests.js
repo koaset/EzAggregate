@@ -3,6 +3,7 @@ var request = require("request");
 var main = require('../../src/main');
 var config = require('./rabbitmq_source_test_config.json');
 var baseUrl = 'http://localhost:' + config.restapi.port + '/';
+var log = require('log4js').getLogger(require('path').basename(__filename));
 
 var channel;
 var mqConnection;
@@ -10,15 +11,15 @@ var mqConnection;
 describe("main tests", function() {
 
     before(async function(){
-        console.log('Starting rabbitmq source test instance...');
+        log.info('Starting rabbitmq source test instance...');
         var start = main.start(config);
         await createPublisher();
         await start;
-        console.log('Test instance started.\nRunning tests...');
+        log.info('Test instance started.\nRunning tests...');
     });
 
     after(function(){
-        console.log('Tests done, closing test instance.');
+        log.info('Tests done, closing test instance.');
         mqConnection.close();
         main.stop();
     });
@@ -59,10 +60,10 @@ function createPublisher(){
     return new Promise(async function(resolve, reject) {
         var amqp = require('amqplib/callback_api');
         await amqp.connect('amqp://' + config.rabbitmq.url, function(err, conn) {
-        console.log('Connecting to mq...');
+        log.debug('Connecting to mq...');
         mqConnection = conn;
         conn.createChannel(async function(err, chan) {
-                console.log('RabbitMQ connected.');
+                log.debug('RabbitMQ connected.');
                 channel = chan;
                 resolve();
             });

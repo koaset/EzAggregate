@@ -3,6 +3,7 @@ const db = require('./mongo');
 const sourceHelper = require('./sourceHelper');
 var config;
 var connection;
+var log = require('log4js').getLogger(require('path').basename(__filename));
 
 function start(source) {
     return new Promise(function(resolve, reject) {
@@ -21,7 +22,7 @@ function start(source) {
         amqp.connect(connectionString, function(err, conn) {
             if (err) 
             {
-                console.error('Unable to connect to RabbitMQ: ' + err.message);
+                log.error('Unable to connect to RabbitMQ: ' + err.message);
                 throw err.message;
             };
             conn.createChannel(function(err, ch) {
@@ -58,7 +59,7 @@ function setUpSource(s, ch) {
         var json = JSON.parse(msg.content);
         handleMessage(json, store);
     },  {noAck: true});
-    console.log('RabbitMQ source initiated: ' + s.name);
+    log.debug('RabbitMQ source initiated: ' + s.name);
 }
 
 function handleMessage(json, store){
@@ -67,7 +68,7 @@ function handleMessage(json, store){
         db.addToStore(store.name, entry);
     }
     catch (err) {
-        console.error('Error when handling MQ message:' + err);
+        log.error('Error when handling MQ message:' + err);
     }
 }
 

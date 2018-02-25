@@ -3,20 +3,21 @@ const parse = require('parse-duration');
 var mongoClient = require('mongodb').MongoClient;
 var db;
 var connection;
+var log = require('log4js').getLogger(require('path').basename(__filename));
 
 async function connect() {
   return new Promise(async function(resolve, reject) {
     config = require('./configStorage').get();
-    console.log('Connecting to database...');
+    log.debug('Connecting to database...');
     mongoClient.connect( config.database.url, function( err, con ) {
       if (err) 
       {
-        console.error('Unable to connect to database: ' + err.message);
+        log.error('Unable to connect to database: ' + err.message);
         throw err.message;
       };
       connection = con;
       db = con.db(config.database.name);
-      console.log('Connected to database.');
+      log.debug('Connected to database.');
       resolve();
     });
   });
@@ -36,13 +37,13 @@ async function assureStore(store) {
   return new Promise(async function(resolve, reject) {
     var name = store.name;
     var exists = await db.listCollections({name: name}).hasNext();
-    console.log('Store ' + name + ' exists: ' + exists);
+    log.debug('Store ' + name + ' exists: ' + exists);
 
     if (exists) resolve();
 
     await db.createCollection(name, function(err, res) {
       if (err) throw err;
-      console.log("Store " + name + " created.");
+      log.debug("Store " + name + " created.");
       resolve();
     });
   });
@@ -60,9 +61,9 @@ function scheduleCleanup() {
             if (err) throw err;
             var deleted = res.deletedCount;
             if (deleted !== 0)
-              console.log('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
+              log.debug('Cleanup: ' + deleted + ' entries deleted for store ' + s.name);
           })}, parse(cleanup.interval));
-        console.log('Cleanup scheduled for store ' + s.name + ' every ' + cleanup.interval + " ms.");
+        log.debug('Cleanup scheduled for store ' + s.name + ' every ' + cleanup.interval + " ms.");
       }
     });
     resolve();
