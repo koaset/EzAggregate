@@ -52,3 +52,14 @@ describe("get sum -> post -> get sum", function() {
         });
     });
 });
+
+describe("post", function() {
+    it ("returns status 400 with multiple errors", function(done){
+        var body = { user_id: 'some id', name: 321, num_bananas: 'not a number' };
+        request.post({url: baseUrl + 'api/bananas', body: body, json: true}, function(error, response, body) {
+            expect(response.statusCode).to.equal(400);
+            expect(response.body.Error.length).to.equal(2);
+            done();
+        });
+    });
+});

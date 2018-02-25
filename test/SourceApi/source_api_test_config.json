@@ -12,7 +12,8 @@
 				"name": "banana_store",
 				"fields": {
 					"user_id": "string",
-					"num_bananas": "number"
+					"num_bananas": "number",
+					"name": "string"
 				}
 			}
 		]
