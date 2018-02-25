@@ -2,7 +2,8 @@
 	"log": {
 		"path": "./main.log",
 		"level": "debug",
-		"to_stdout": true
+		"to_stdout": true,
+		"log_requests": true
 	},
 	"database": {
 		"url":  "mongodb://localhost:27017/",

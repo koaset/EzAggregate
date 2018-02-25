@@ -4,12 +4,13 @@ const url = require('url');
 var log = require('log4js').getLogger(require('path').basename(__filename));
 
 function addOutput(output, app){
-    app.get(config.restapi.base_path + output.path, async function(req, res) {
+    app.get(config.restapi.base_path + output.path, async function(req, res, next) {
         var query = url.parse(req.url, true).query;
         var entries = await db.getFromStore(output.store, query, output.time_options);
         var aggregation = aggregate(output.aggregation, entries);
         res.json(aggregation);
-        res.end();
+        res.status(200);
+        next();
     });
 }
 

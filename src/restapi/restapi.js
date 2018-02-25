@@ -24,6 +24,9 @@ async function start() {
 
         app.use(errorHandler);
 
+        if (config.log.log_requests === true)
+            app.use(requestLogger);
+
         server = app.listen(config.restapi.port);
         resolve();
     });
@@ -38,11 +41,18 @@ function errorHandler (err, req, res, next) {
         res.status(400);
         res.json({ Error: err.validationErrors });
     }
-    else {
+    else { 
         log.error(err.stack);
         res.status(500);
         res.json({ Error: 'Internal Server Error.' });
     }
+    next();
+}
+
+function requestLogger(req, res, next) {
+    const requestLogger = require('log4js').getLogger('request');
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    requestLogger.info('request_method: ' + req.method + ', request_url: ' + fullUrl + ', response_code: ' + res.statusCode);
 }
 
 async function stop() {

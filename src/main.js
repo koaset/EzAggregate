@@ -11,13 +11,7 @@ if (require.main === module) {
 
 async function start(config){
     return new Promise(async function(resolve, reject) {
-
-        try {
-            await configureLogger(config);
-        }
-        catch (err) {
-            reject(err);
-        }
+        await configureLogger(config);
 
         log.info('Starting application...');
         if (config == null)
