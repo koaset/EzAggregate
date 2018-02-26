@@ -20,22 +20,22 @@ function createDbObject(body, fields) {
 
 function validateEntry(type, key, value) {
     if (value === undefined)
-            throw new Error(errorMessageBase(key) + 'missing or invalid');
+            ThrowError(key, 'missing or invalid');
     if (type === "string") {
         if (typeof(value) !== "string")
-            throw new Error(errorMessageBase(key) + 'Invalid value: ' + value + ', expected ' + type);
+            ThrowError(key, 'Invalid value: ' + value + ', expected ' + type);
         return;
     }
     else if (type === "number") {
         if (typeof(value) !== "number")
-            throw new Error(errorMessageBase(key) + 'Invalid value: ' + value + ', expected ' + type);
+            ThrowError(key, 'Invalid value: ' + value + ', expected ' + type);
         return;
     }
-    throw new Error(errorMessageBase(key) + 'Invalid type: ' + type);
+    ThrowError(key, 'Invalid type: ' + type);
 }
 
-function errorMessageBase(key, message) {
-    return 'Field ' + key + ', ';
+function ThrowError(key, message) {
+    throw new Error('Field ' + key + ', ' + message);
 }
 
 module.exports = {

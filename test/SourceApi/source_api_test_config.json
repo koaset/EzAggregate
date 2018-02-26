@@ -2,7 +2,7 @@
 	"log": {
 		"path": "./test.log",
 		"level": "warn",
-		"to_stdout": true
+		"to_stdout": false
 	},
 	"database": {
 		"name": "test_db",
@@ -44,6 +44,18 @@
 				"action": "sum",
 				"order_by": "sum_bananas",
 				"invert": true
+			}
+		},
+		{
+			"name": "bad_output",
+			"store": "banana_store",
+			"type": "restapi",
+			"path": "/bad",
+			"aggregation": {
+				"name": "some_bananas",
+				"key": "user_id",
+				"field": "num_bananas",
+				"action": "invalid"
 			}
 		}
 	]

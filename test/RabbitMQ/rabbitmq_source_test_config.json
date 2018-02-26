@@ -2,7 +2,7 @@
 	"log": {
 		"path": "./test.log",
 		"level": "warn",
-		"to_stdout": true
+		"to_stdout": false
 	},
 	"database": {
 		"url":  "mongodb://localhost:27017/",

@@ -44,12 +44,14 @@ describe("get -> get after publish", function() {
     it ("get returns extra bananas after publish", function(done){
         publishEntity({ user_id: test_user_id, name: "hej", num_bananas: bananas_to_add });
         
-        request.get(baseUrl + 'api/mqbananas', function(error, response, body) {
-            var responseObject = JSON.parse(response.body);
-            var new_total = responseObject.find(ro => ro.user_id === test_user_id).sum_bananas;
-            expect(new_total).to.equal(test_user_bananas + bananas_to_add);
-            done();
-        });
+        setTimeout(function() {
+            request.get(baseUrl + 'api/mqbananas', function(error, response, body) {
+                var responseObject = JSON.parse(response.body);
+                var new_total = responseObject.find(ro => ro.user_id === test_user_id).sum_bananas;
+                expect(new_total).to.equal(test_user_bananas + bananas_to_add);
+                done();
+            });
+        }, 10);
     });
 });
 

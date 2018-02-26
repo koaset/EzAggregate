@@ -5,37 +5,53 @@ var log = require('log4js').getLogger(require('path').basename(__filename));
 
 function addOutput(output, app){
     app.get(config.restapi.base_path + output.path, async function(req, res, next) {
-        var query = url.parse(req.url, true).query;
-        var entries = await db.getFromStore(output.store, query, output.time_options);
-        var aggregation = aggregate(output.aggregation, entries);
-        res.json(aggregation);
-        res.status(200);
-        next();
+        try {
+            var query = url.parse(req.url, true).query;
+            var entries = await db.getFromStore(output.store, query, output.time_options);
+            var aggregation = aggregate(output.aggregation, entries);
+            res.json(aggregation);
+            res.status(200);
+            next();
+        }
+        catch (err) {
+            next(err);
+        }
     });
 }
 
 function aggregate(agg, entries) {
-    if (agg === undefined || agg.name === undefined || agg.field === undefined)
+    if (noAggregation(agg))
         return entries.sort((e1, e2) => -compare(e1, e2, "timestamp"));
     
-    var result;
+    var result = getAggregation(agg, entries);
+    if (result instanceof Array)
+        return sortedAggregation(agg, result);
+    return result;
+}
 
-    if (agg.action === "sum")
-        result = sum(agg, entries);
-    if (agg.action === "max")
-        result = max(agg, entries);
-    if (agg.action === "min")
-        result = min(agg, entries);
+function getAggregation(agg, entries) {
+    switch (agg.action) {
+        case "sum":
+            return sum(agg, entries);
+        case "max":
+            return max(agg, entries);
+        case "min":
+            return min(agg, entries);
+        default:
+            throw new Error("Non supported aggregation action: " + agg.action);
+    }
+}
 
-    if (!(result instanceof Array))
-        return result;
-
+function sortedAggregation(agg, result) {
     if (agg.order_by !== undefined)
         result.sort((e1, e2) => compare(e1, e2, agg.order_by));
     if (agg.invert !== undefined && agg.invert.toString() == "true")
         result.reverse();
-
     return result;
+}
+
+function noAggregation(agg) {
+    return agg === undefined || agg.name === undefined || agg.field === undefined;
 }
 
 function sum(agg, entries) {

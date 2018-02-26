@@ -53,6 +53,15 @@ describe("get sum -> post -> get sum", function() {
     });
 });
 
+describe("get", function() {
+    it ("returns status 500 when output aggregator wrongly configured", function(done){
+        request.get(baseUrl + 'api/bad', function(error, response, body) {
+            expect(response.statusCode).to.equal(500);
+            done();
+        });
+    });
+});
+
 describe("post", function() {
     it ("returns status 400 with multiple errors", function(done){
         var body = { user_id: 'some id', name: 321, num_bananas: 'not a number' };
